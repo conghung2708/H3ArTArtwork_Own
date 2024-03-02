@@ -6,6 +6,7 @@ using H3ArT.Models.ViewModels;
 using H3ArT.Utility;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using H3ArT.Models;
 
 namespace H3ArTArtwork.Areas.Customer.Controllers
 {
@@ -84,6 +85,19 @@ namespace H3ArTArtwork.Areas.Customer.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+
+        public IActionResult ArtistProfile(string artistID)
+        {
+            UserVM userVM = new()
+            {
+                artist = _unitOfWork.ApplicationUserObj.Get(u => u.Id == artistID),
+                artworkList = _unitOfWork.ArtworkObj.GetAll(u => u.artistID == artistID)
+            };
+            return View(userVM);
+        }
+
+
         public IActionResult Privacy()
         {
             return View();

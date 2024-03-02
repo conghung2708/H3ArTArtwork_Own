@@ -22,7 +22,7 @@
 
     <main role="main">
 
-
+       
         <section class="bg-gray200 pt-5 pb-5">
             <div class="container">
                 <div class="row justify-content-center">
@@ -33,10 +33,11 @@
                                 <h1 class="card-title display-4" style="text-align: center;">
                                     @Model.artwork.title
                                 </h1>
-                                <p style="font-size: smaller; text-align: center;">Artist: @Model.artwork.applicationUser.FullName</p>
-                                <p>
+                                <div style="text-align: center;">
+                                    <a asp-action="ArtistProfile" asp-route-artistId="@Model.artistID" style="font-size: smaller; display: inline-block;">Artist: @Model.artwork.applicationUser.FullName</a>
+                                </div>
+                           
                                     @Html.Raw(@Model.artwork.description)
-                                </p>
                                   @if (Model.artwork.isPremium)
                                 {
                                     <div class="fs-5 mb-5">
