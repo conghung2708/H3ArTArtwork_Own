@@ -22,13 +22,14 @@
 
     <main role="main">
 
-       
+
         <section class="bg-gray200 pt-5 pb-5">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-md-7">
                         <article class="card">
                             <img class="card-img-top mb-2" src="@Model.artwork.imageUrl" alt="Card image">
+
                             <div class="card-body">
                                 <h1 class="card-title display-4" style="text-align: center;">
                                     @Model.artwork.title
@@ -36,9 +37,17 @@
                                 <div style="text-align: center;">
                                     <a asp-action="ArtistProfile" asp-route-artistId="@Model.artistID" style="font-size: smaller; display: inline-block;">Artist: @Model.artwork.applicationUser.FullName</a>
                                 </div>
-                           
-                                    @Html.Raw(@Model.artwork.description)
-                                  @if (Model.artwork.isPremium)
+
+                                @Html.Raw(@Model.artwork.description)
+
+                             
+                                <div class="position-absolute end-0 pe-2">
+                                    <a asp-action="ReportArtwork" asp-route-artworkId="@Model.artworkID">
+                                        <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i> Report
+                                    </a>
+                                </div>
+
+                                @if (Model.artwork.isPremium)
                                 {
                                     <div class="fs-5 mb-5">
 
@@ -50,7 +59,7 @@
                                         {
 
                                             <button type="submit"
-                                            class="btn btn-primary bg-gradient w-100 py-2 text-uppercase fw-semibold">
+                                                    class="btn btn-primary bg-gradient w-100 py-2 text-uppercase fw-semibold">
                                                 Add to Cart
                                             </button>
                                         }

@@ -12,5 +12,6 @@ namespace H3ArT.Models.Models
         [Key]
         public int reportArtworkID { get; set; }
         public int artworkID { get; set; }
+        public string reporterUserID { get; set; }
     }
 }

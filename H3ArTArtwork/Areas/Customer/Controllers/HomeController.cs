@@ -45,7 +45,7 @@ namespace H3ArTArtwork.Areas.Customer.Controllers
         }
 
         [HttpPost]
-        [Authorize] //return login
+        [Authorize(Roles = SD.Role_Creator + "," + SD.Role_Customer)]
         public IActionResult Details(ShoppingCart shoppingCart)
         {
             // Set count to 1 to ensure it's always equal to 1
@@ -95,6 +95,52 @@ namespace H3ArTArtwork.Areas.Customer.Controllers
                 artworkList = _unitOfWork.ArtworkObj.GetAll(u => u.artistID == artistID)
             };
             return View(userVM);
+        }
+
+        [Authorize(Roles = SD.Role_Creator + "," + SD.Role_Customer)]
+        public IActionResult ReportArtwork(int artworkID)
+        {
+            //get the id
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            
+            Artwork artwork = _unitOfWork.ArtworkObj.Get(u => u.artworkId == artworkID);
+
+            if (artwork.artistID.Equals(userId))
+            {
+                TempData["error"] = "Cannot report your artwork";
+                return RedirectToAction(nameof(Details), new { artworkID = artworkID });
+            }
+                ReportArtwork reportArtwork = new ReportArtwork();
+                reportArtwork.artworkID = artworkID;
+                reportArtwork.reporterUserID = userId;
+                _unitOfWork.ReportArtworkObj.Add(reportArtwork);
+                _unitOfWork.Save();
+                TempData["success"] = "Report artwork successfully";
+                return RedirectToAction(nameof(Details), new { artworkID = artworkID });  
+        }
+
+        [Authorize(Roles = SD.Role_Creator + "," + SD.Role_Customer)]
+        public IActionResult ReportArtist(string artistID)
+        {
+            //get the id
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if (userId == artistID)
+            {
+                TempData["error"] = "Cannot report yourself";
+                return RedirectToAction(nameof(ArtistProfile), new { artistID = artistID });
+            }
+            ReportArtist reportArtist = new ReportArtist();
+            reportArtist.artistID = artistID;
+          
+            reportArtist.reporterUserID = userId;
+            _unitOfWork.ReportArtistObj.Add(reportArtist);
+            _unitOfWork.Save();
+            TempData["success"] = "Report artist successfully";
+
+
+            return RedirectToAction(nameof(ArtistProfile), new { artistID = artistID });
         }
 
 

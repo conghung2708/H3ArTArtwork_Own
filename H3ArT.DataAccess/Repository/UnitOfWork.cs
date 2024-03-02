@@ -18,6 +18,8 @@ namespace H3ArT.DataAccess.Repository
         public IApplicationUserRepository ApplicationUserObj { get; private set; }
         public IOrderHeaderRepository OrderHeaderObj { get; private set; }
         public IOrderDetailRepository OrderDetailObj { get; private set; }
+        public IReportArtistRepository ReportArtistObj { get; private set; }
+        public IReportArtworkRepository ReportArtworkObj { get; private set; }
         private readonly ApplicationDbContext _db;
 
         public UnitOfWork(ApplicationDbContext db) 
@@ -29,6 +31,8 @@ namespace H3ArT.DataAccess.Repository
             ApplicationUserObj = new ApplicationUserRepository(_db);
             OrderHeaderObj = new OrderHeaderRepository(_db);
             OrderDetailObj = new OrderDetailRepository(_db);
+            ReportArtistObj = new ReportArtistRepository(_db);
+            ReportArtworkObj = new ReportArtworkRepository(_db);
             //Eg Category = new CategoryRepository(_db);
 
         }
