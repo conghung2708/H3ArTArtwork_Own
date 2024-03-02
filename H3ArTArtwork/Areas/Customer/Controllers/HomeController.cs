@@ -54,12 +54,20 @@ namespace H3ArTArtwork.Areas.Customer.Controllers
             //get the id
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            
             Artwork artwork = _unitOfWork.ArtworkObj.Get(u => u.artworkId == shoppingCart.artworkID);
             shoppingCart.buyerID = userId;
             shoppingCart.artistID = artwork.artistID;
             shoppingCart.isNew = true;
 
-            ShoppingCart cartFromDb = _unitOfWork.ShoppingCartObj.Get(u => u.buyerID == userId && u.artworkID == shoppingCart.artworkID);   
+            if (userId.Equals(shoppingCart.artistID))
+            {
+                TempData["error"] = "You cannot add your own product to the cart.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            ShoppingCart cartFromDb = _unitOfWork.ShoppingCartObj.Get(u => u.buyerID == userId && u.artworkID == shoppingCart.artworkID);
             if (cartFromDb != null)
             {
                 //cartFromDb.Count += shoppingCart.Count;
@@ -76,8 +84,8 @@ namespace H3ArTArtwork.Areas.Customer.Controllers
                 _unitOfWork.Save();
                 //add the cart value to session
                 HttpContext.Session.SetInt32(SD.SessionCart, _unitOfWork.ShoppingCartObj.GetAll(u => u.buyerID == userId).Count()); //Count the distinct item that user has
-               
-              
+
+
             }
 
             TempData["success"] = "Cart updated successfully";
@@ -103,7 +111,7 @@ namespace H3ArTArtwork.Areas.Customer.Controllers
             //get the id
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var userId = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
-            
+
             Artwork artwork = _unitOfWork.ArtworkObj.Get(u => u.artworkId == artworkID);
 
             if (artwork.artistID.Equals(userId))
@@ -111,13 +119,13 @@ namespace H3ArTArtwork.Areas.Customer.Controllers
                 TempData["error"] = "Cannot report your artwork";
                 return RedirectToAction(nameof(Details), new { artworkID = artworkID });
             }
-                ReportArtwork reportArtwork = new ReportArtwork();
-                reportArtwork.artworkID = artworkID;
-                reportArtwork.reporterUserID = userId;
-                _unitOfWork.ReportArtworkObj.Add(reportArtwork);
-                _unitOfWork.Save();
-                TempData["success"] = "Report artwork successfully";
-                return RedirectToAction(nameof(Details), new { artworkID = artworkID });  
+            ReportArtwork reportArtwork = new ReportArtwork();
+            reportArtwork.artworkID = artworkID;
+            reportArtwork.reporterUserID = userId;
+            _unitOfWork.ReportArtworkObj.Add(reportArtwork);
+            _unitOfWork.Save();
+            TempData["success"] = "Report artwork successfully";
+            return RedirectToAction(nameof(Details), new { artworkID = artworkID });
         }
 
         [Authorize(Roles = SD.Role_Creator + "," + SD.Role_Customer)]
@@ -133,7 +141,7 @@ namespace H3ArTArtwork.Areas.Customer.Controllers
             }
             ReportArtist reportArtist = new ReportArtist();
             reportArtist.artistID = artistID;
-          
+
             reportArtist.reporterUserID = userId;
             _unitOfWork.ReportArtistObj.Add(reportArtist);
             _unitOfWork.Save();

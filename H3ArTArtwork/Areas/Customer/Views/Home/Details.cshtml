@@ -55,6 +55,11 @@
                                     </div>
                                     <form method="post">
                                         <input asp-for="artworkID" hidden />
+                                        @{
+                                            var checkCreator = User.IsInRole(SD.Role_Creator);
+                                            var checkCustomer = User.IsInRole(SD.Role_Customer);
+                                            var a = 10;
+                                        }
                                         @if (!User.IsInRole(SD.Role_Admin) && !User.IsInRole(SD.Role_Moderator))
                                         {
 

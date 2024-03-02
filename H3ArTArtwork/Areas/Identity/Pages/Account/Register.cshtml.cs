@@ -126,14 +126,29 @@ namespace H3ArTArtwork.Areas.Identity.Pages.Account
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Creator)).GetAwaiter().GetResult();
                 _roleManager.CreateAsync(new IdentityRole(SD.Role_Moderator)).GetAwaiter().GetResult();
             }
-            Input = new()
+            
+            if (User.IsInRole(SD.Role_Admin))
             {
-                RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
+                Input = new()
                 {
-                    Text = i,
-                    Value = i
-                })
-            };
+                    RoleList = _roleManager.Roles.Select(x => x.Name).Select(i => new SelectListItem
+                    {
+                        Text = i,
+                        Value = i
+                    })
+                };
+            }
+            else
+            {
+                Input = new InputModel
+                {
+                    RoleList = new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Customer", Value = SD.Role_Customer },
+                    new SelectListItem { Text = "Creator", Value = SD.Role_Creator }
+                }
+                };
+            }
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
