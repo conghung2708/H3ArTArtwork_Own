@@ -23,10 +23,13 @@ namespace H3ArTArtwork.Areas.Admin.Controllers
         {
             _unitOfWork = unitOfWork;
         }
+
+        [Authorize(Roles = SD.Role_Creator + "," + SD.Role_Customer + "," + SD.Role_Admin)]
         public IActionResult Index()
         {
             return View();
         }
+        [Authorize(Roles = SD.Role_Creator + "," + SD.Role_Customer + "," + SD.Role_Admin)]
         public IActionResult Details(int orderId)
         {
             OrderVM = new()
